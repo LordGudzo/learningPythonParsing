@@ -10,15 +10,13 @@ header = { 'User-Agent': user}
 #block auth
 
 data = {                    #need find in network in dewtools (post)
-    'username':	login_password['login'],
-    'password':	login_password['password'],
-    'csrfmiddlewaretoken':	"Di5Mr9zwu4XneLHE9tYzWddVz5COBdUX1o3qf2wjKdt8T3D7eYtCAxoX1TL6Tx7j",
-    'mode':	"login"
+    'post_data': f"username={login_password['login']}&password={login_password['password']}&remember_me=on&act=login"
 }
 
 
-link_auth = "https://dou.ua/ajax-login/"
+link_auth = "https://zastavok.net/includes/ajax/auth.php"
 responce_auth = session.post(link_auth, data=data, headers=header)
+
 
 
 cookies_dict = [        #rewrites cookies
@@ -29,3 +27,11 @@ cookies_dict = [        #rewrites cookies
 session2 = requests.Session()
 for cookies in cookies_dict:
     session2.cookies.set(**cookies) 
+
+# work with user setting profile
+link_user_setting = "https://zastavok.net/user/LordGudzo/settings/"
+responce_user = session.get(link_user_setting, headers=header).text
+soup = BeautifulSoup(responce_user, "lxml")
+settings_block = soup.find("div", id="subscr")
+user_login = settings_block.find("div", class_="c2").text
+print(user_login)
